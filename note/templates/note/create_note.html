@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+
+{% block content %} 
+    <div class="row">  
+        <div class="col-8">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-warning" role="alert">
+                    {% for message in messages %}
+                        {{ message }}<br>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+        <form action="{{ url_for('note.note_to_db') }}" method="post">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.notename.label }} <br>
+                {{ form.notename() }}
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">{{ form.notebody.label }}</span>
+                </div>
+                {{ form.notebody() }}
+            </div>  <br>
+            {{ form.submit }}
+        </form>
+        </div>
+    </div>
+{% endblock %}
