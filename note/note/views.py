@@ -9,6 +9,7 @@ blueprint = Blueprint('note', __name__, url_prefix='/notes')
 @blueprint.route('/create_note')
 def create_note():
     if not current_user.is_authenticated:
+        flash('log in first')
         return redirect(url_for('user.login'))
     title = 'Create note'
     create_note_form = CreateNoteForm()

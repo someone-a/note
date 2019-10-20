@@ -1,7 +1,9 @@
-from note.user.forms import LoginForm
+from note.user.forms import LoginForm, RegistrationForm
 from note.user.models import User
 from flask_login import current_user, login_user, logout_user
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, request
+import json
+import requests
 
 blueprint = Blueprint('user', __name__)
 
@@ -35,3 +37,30 @@ def logout():
     logout_user()
     flash('Вы успешно разлогинились')
     return redirect(url_for('user.login'))
+
+
+@blueprint.route('/registration')
+def registration():
+    if current_user.is_authenticated:
+        return redirect(url_for('note.create_note'))
+    title = 'Регистрация'
+    registration_form = RegistrationForm()
+    return render_template('user/registration.html',
+                           page_title=title, form=registration_form)
+
+
+@blueprint.route('/process-registration', methods=['POST'])
+def process_registration():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        dict_ = {'username': form.username.data,
+                 'password': form.password.data}
+        r = requests.post('http://'+request.host +
+                          url_for('api.process_registration'),
+                          json=json.dumps(dict_))
+        if r.status_code == 200:
+            flash('Успешная регистрация')
+            return redirect(url_for('user.login'))
+
+    flash('Ошибка регистрации')
+    return redirect(url_for('user.registration'))
