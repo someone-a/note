@@ -75,3 +75,11 @@ def change_note(note_id):
         db.session.commit()
         return '200'
     abort(403)
+
+@app.route('/api/v1/notes/<int:note_id>', methods=['DELETE'])
+def delete_note(note_id):
+    if not request.json:
+        abort(400)
+    n = Note.query.filter(Note.note_id == note_id).all()
+    if n.user_id == request.json['user_id']:
+        Note.query.filter_by(note_id=note_id).delete()
