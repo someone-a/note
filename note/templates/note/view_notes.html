@@ -1,0 +1,33 @@
+
+{% extends "base.html" %}
+
+{% block content %} 
+    <div class="row">  
+        <div class="col-8">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-warning" role="alert">
+                    {% for message in messages %}
+                        {{ message }}<br>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <div class="card-columns">
+        {% with notes = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10) %}
+            {% for i in notes %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Note title</h5>
+                        <p class="card-text">Note text</p>
+                        <p class="card-text"><small class="text-muted">Tag</small></p>
+                        <a href="#" class="card-link">Delete link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endwith %}     
+    </div>
+{% endblock %}
