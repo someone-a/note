@@ -29,3 +29,11 @@ def note_to_db():
 
     flash(f'json {json.dumps(dict_)}')
     return redirect(url_for('note.create_note'))
+
+@blueprint.route('/view_notes')
+def view_notes():
+    if not current_user.is_authenticated:
+        flash('log in first')
+        return redirect(url_for('user.login'))
+    title = 'View notes'
+    return render_template('note/view_notes.html', page_title = title)
