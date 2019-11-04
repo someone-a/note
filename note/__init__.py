@@ -6,7 +6,7 @@ from note.user.models import User
 from note.note.models import Note
 from note.user.views import blueprint as user_blueprint
 from note.note.views import blueprint as note_blueprint
-from note.api.views import blueprint as api_blueprint
+from note.api.api import blueprint as api_blueprint
 
 
 def create_app():
