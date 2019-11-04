@@ -1,10 +1,13 @@
-from flask import Blueprint, render_template, flash, redirect, url_for
-from note.note.forms import CreateNoteForm
-from flask_login import current_user
 import json
+import requests
+
+from flask import Blueprint, render_template, flash, redirect, request, url_for
+from flask_login import current_user
+
+from note.note.forms import CreateNoteForm
+from note.note.notes_temp import notes_list_func # временно, эмуляция получения данных из api
 
 blueprint = Blueprint('note', __name__, url_prefix='/notes')
-
 
 @blueprint.route('/create_note')
 def create_note():
@@ -36,4 +39,15 @@ def view_notes():
         flash('log in first')
         return redirect(url_for('user.login'))
     title = 'View notes'
-    return render_template('note/view_notes.html', page_title = title)
+
+    user_id_to_json = json.dumps({'user_id': current_user.id})
+    try:
+        all_user_notes = json.loads(requests.get('http://' + request.host + '/api/v1/notes', json=user_id_to_json)) # проверить, добавить url_for('api.api_get_notes')
+        notes_list = all_user_notes['notes']
+        print(all_user_notes)
+    except (TypeError):
+        flash('Сервис заметок временно недоступен')
+
+    notes_list = notes_list_func()['notes'] # временно, эмуляция получения данных из api
+
+    return render_template('note/view_notes.html', page_title = title, notes_list = notes_list)
