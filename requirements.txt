@@ -16,3 +16,5 @@ Werkzeug==0.16.0
 WTForms==2.2.1
 flask-migrate==2.5.2
 requests==2.22.0
+gunicorn==19.9.0
+
