@@ -7,6 +7,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(128))
+    tg_login = db.Column(db.String(64), index=True, unique=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
