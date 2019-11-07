@@ -20,27 +20,30 @@ def process_registration():
 
     return '200'
 
+
 @blueprint.route('/v1/notes', methods=['POST'])
 def create_note():
-    if not request.json or not 'name' in request.json:
+    data = json.loads(request.json)
+    if not (data or 'name' in data):
         abort(400)
     note = Note(
-        user_id=request.json["user_id"],
+        user_id=data["user_id"],
         type='note',
-        name=request.json["name"],
-        text=request.json.get('text', ""),
+        name=data["name"],
+        text=data.get('text', ""),
         creation_dt=datetime.now(),
-        tags=request.json.get('tags', "")
+        tags=data.get('tags', "")
     )
     db.session.add(note)
     db.session.commit()
     return '200'
 
+
 @blueprint.route('/v1/notes', methods=['GET'])
 def api_get_notes():
     if not request.json:
         abort(400)
-    user = request.json["user_id"]
+    user = json.loads(request.json)["user_id"]
     notes_list = []
     for note in Note.query.filter(Note.user_id == user).all():
         single_note = {
@@ -55,13 +58,15 @@ def api_get_notes():
         notes_list.append(single_note)
     return jsonify({'notes': notes_list})
 
+
 @blueprint.route('/v1/notes/<int:note_id>', methods=['GET'])
 def get_note():
     if not request.json:
         abort(400)
     user = request.json["user_id"]
     id = request.json['note_id']
-    for note in Note.query.filter(Note.user_id == user, Note.note_id == id).all():
+    for note in Note.query.filter(Note.user_id == user,
+                                  Note.note_id == id).all():
         single_note = {
             'note_id': note.note_id,
             'user_id': note.user_id,
@@ -92,6 +97,7 @@ def change_note(note_id):
         db.session.commit()
         return '200'
     abort(403)
+
 
 @blueprint.route('/v1/notes/<int:note_id>', methods=['DELETE'])
 def delete_note(note_id):

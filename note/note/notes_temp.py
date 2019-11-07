@@ -32,10 +32,10 @@ note3 = {
 
 notes_list = [note1, note2, note3]
 
-notes = {'notes' : notes_list}
+notes = {'notes': notes_list}
+
 
 def notes_list_func():
-    #note_list_view = notes['notes']
-    #return note_list_view
+    # note_list_view = notes['notes']
+    # return note_list_view
     return notes
-

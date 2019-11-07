@@ -5,9 +5,9 @@ from flask import Blueprint, render_template, flash, redirect, request, url_for
 from flask_login import current_user
 
 from note.note.forms import CreateNoteForm
-from note.note.notes_temp import notes_list_func # временно, эмуляция получения данных из api
 
 blueprint = Blueprint('note', __name__, url_prefix='/notes')
+
 
 @blueprint.route('/create_note')
 def create_note():
@@ -24,14 +24,23 @@ def create_note():
 @blueprint.route('/note_to_db', methods=['POST'])
 def note_to_db():
     form = CreateNoteForm()
-    dict_ = {
-        'id': current_user.id,
-        'note_name': form.notename.data,
-        'note_body': form.notebody.data
-    }
+    if form.validate_on_submit():
+        dict_ = {
+            'user_id': current_user.id,
+            'type': 'note',
+            'name': form.notename.data,
+            'text': form.notebody.data
+        }
+        r = requests.post('http://'+request.host +
+                          url_for('api.create_note'),
+                          json=json.dumps(dict_))
+        if r.status_code == 200:
+            flash('Заметка создана')
+            return redirect(url_for('note.view_notes'))
 
-    flash(f'json {json.dumps(dict_)}')
-    return redirect(url_for('note.create_note'))
+    flash('Ошибка создания заметки')
+    return redirect(url_for('note.view_notes'))
+
 
 @blueprint.route('/view_notes')
 def view_notes():
@@ -39,15 +48,17 @@ def view_notes():
         flash('log in first')
         return redirect(url_for('user.login'))
     title = 'View notes'
-
     user_id_to_json = json.dumps({'user_id': current_user.id})
     try:
-        all_user_notes = json.loads(requests.get('http://' + request.host + '/api/v1/notes', json=user_id_to_json)) # проверить, добавить url_for('api.api_get_notes')
+        print('http://' + request.host +
+              '/api/v1/notes' + url_for('api.api_get_notes'))
+        all_user_notes = requests.get('http://' + request.host +
+                                      url_for('api.api_get_notes'),
+                                      json=user_id_to_json).json()
         notes_list = all_user_notes['notes']
-        print(all_user_notes)
+        print(notes_list)
     except (TypeError):
         flash('Сервис заметок временно недоступен')
 
-    notes_list = notes_list_func()['notes'] # временно, эмуляция получения данных из api
-
-    return render_template('note/view_notes.html', page_title = title, notes_list = notes_list)
+    return render_template('note/view_notes.html',
+                           page_title=title, notes_list=notes_list)
