@@ -12,6 +12,7 @@ PROXY = {'proxy_url': 'socks5://t3.learn.python.ru:1080',
 def get_notes(bot, update):
     app = create_app()
     login = update.message.chat.username
+    app.config["SERVER_NAME"]="127.0.0.1:5000"
     with app.app_context():
         user_id_to_json = json.dumps(
             {'user_id': User.query.filter(User.tg_login == login).first().id})
