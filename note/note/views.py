@@ -50,13 +50,10 @@ def view_notes():
     title = 'View notes'
     user_id_to_json = json.dumps({'user_id': current_user.id})
     try:
-        print('http://' + request.host +
-              '/api/v1/notes' + url_for('api.api_get_notes'))
         all_user_notes = requests.get('http://' + request.host +
                                       url_for('api.api_get_notes'),
                                       json=user_id_to_json).json()
         notes_list = all_user_notes['notes']
-        print(notes_list)
     except (TypeError):
         flash('Сервис заметок временно недоступен')
 

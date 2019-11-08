@@ -12,7 +12,7 @@ blueprint = Blueprint('api', __name__, url_prefix='/api')
 def process_registration():
     data = json.loads(request.json)
 
-    new_user = User(username=data['username'])
+    new_user = User(username=data['username'], tg_login=data['tg_login'])
     new_user.set_password(data['password'])
 
     db.session.add(new_user)
