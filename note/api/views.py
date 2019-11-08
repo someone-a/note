@@ -60,11 +60,11 @@ def api_get_notes():
 
 
 @blueprint.route('/v1/notes/<int:note_id>', methods=['GET'])
-def get_note():
+def get_note(note_id):
     if not request.json:
         abort(400)
-    user = request.json["user_id"]
-    id = request.json['note_id']
+    user = json.loads(request.json)["user_id"]
+    id = json.loads(request.json)["note_id"]
     for note in Note.query.filter(Note.user_id == user,
                                   Note.note_id == id).all():
         single_note = {
@@ -83,20 +83,21 @@ def get_note():
 def change_note(note_id):
     if not request.json:
         abort(400)
-    n = Note.query.filter(Note.note_id == note_id).all()
-    if n.user_id == request.json['user_id']:
-        note = Note(
-            note_id=note_id,
-            user_id=request.json["user_id"],
-            type='note',
-            name=request.json["name"],
-            text=request.json.get('text', ""),
-            tags=request.json.get('tags', "")
-        )
-        db.session.add(note)
-        db.session.commit()
-        return '200'
-    abort(403)
+    data = json.loads(request.json)
+
+    note = Note.query.filter_by(note_id=note_id).first()
+ 
+    note.user_id=data["user_id"]
+    note.name = data["name"]
+    note.type='note'
+    note.text=data.get('text', "")
+    note.creation_dt=datetime.now()
+    note.tags=data.get('tags', "")
+
+    db.session.commit()
+    return '200'
+    
+    #abort(403)
 
 
 @blueprint.route('/v1/notes/<int:note_id>', methods=['DELETE'])

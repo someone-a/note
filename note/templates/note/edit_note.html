@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+
+{% block content %} 
+    <div class="row">  
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-warning" role="alert">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ note.name }}</h5>
+                        <p class="card-text">{{ note.text }}</p>
+                        <p class="card-text"><small class="text-muted">{{ note.tags }}</small></p>
+                        <a href="#" class="card-link">Delete link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>  
+                </div>
+        </div>
+            <div class="col-6">
+                <form action="{{ url_for('note.edit_note_to_db', note_id=note.note_id) }}" method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.notename.label }} <br>
+                        {{ form.notename() }}
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">{{ form.notebody.label }}</span>
+                        </div>
+                        {{ form.notebody() }}
+                    </div>  <br>
+                    {{ form.submit }}
+                </form>
+            </div>
+    </div>
+{% endblock %}
