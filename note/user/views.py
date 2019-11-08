@@ -54,7 +54,8 @@ def process_registration():
     form = RegistrationForm()
     if form.validate_on_submit():
         dict_ = {'username': form.username.data,
-                 'password': form.password.data}
+                 'password': form.password.data,
+                 'tg_login': form.tg_login.data}
         r = requests.post('http://'+request.host +
                           url_for('api.process_registration'),
                           json=json.dumps(dict_))
