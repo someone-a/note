@@ -11,7 +11,7 @@ blueprint = Blueprint('user', __name__)
 @blueprint.route('/')
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('note.create_note'))
+        return redirect(url_for('note.view_notes'))
     title = 'Авторизация'
     login_form = LoginForm()
     return render_template('user/login.html',
@@ -26,7 +26,7 @@ def process_login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             flash('Вы вошли на сайт')
-            return redirect(url_for('note.create_note'))
+            return redirect(url_for('note.view_notes'))
 
     flash('Неправильное имя пользователя или пароль')
     return redirect(url_for('user.login'))
@@ -42,7 +42,7 @@ def logout():
 @blueprint.route('/registration')
 def registration():
     if current_user.is_authenticated:
-        return redirect(url_for('note.create_note'))
+        return redirect(url_for('note.view_notes'))
     title = 'Регистрация'
     registration_form = RegistrationForm()
     return render_template('user/registration.html',
